@@ -26,9 +26,9 @@ def lazy_connect():
         _connection = sqlite3.connect('refs.db')
     return _connection.cursor()
     
-def lookup(url):
+def lookup(uri):
     '''
-    bib = lookup(url)
+    bib = lookup(uri)
 
     Return None if not in database.
     '''
@@ -36,16 +36,16 @@ def lookup(url):
     res = cursor.execute('''
         SELECT bid
         FROM links
-        WHERE url = ?''',
-        url)
+        WHERE uri = ?''',
+        uri)
     res = res.fetchall()
     if not res:
         return None
     return res[0][0]
 
-def add(bibliography, url=None):
+def add(bibliography, uri=None):
     '''
-    add(bibliography, url=None)
+    add(bibliography, uri=None)
 
     '''
     cursor = lazy_connect()
@@ -63,18 +63,18 @@ def add(bibliography, url=None):
         bibliography.id = cursor.fetchone()[0]
 
 
-def addlink(bibliography, url):
+def addlink(bibliography, uri):
     '''
-    addlink(bibliography, url)
+    addlink(bibliography, uri)
     '''
-    if lookup(url) is not None:
-        raise Exception('refs.DB.addlink: url is already linked!')
+    if lookup(uri) is not None:
+        raise Exception('refs.DB.addlink: uri is already linked!')
     if bibliography.id is None:
         raise Exception('refs.DB.addlink: bid is None!')
     cursor = lazy_connect()
     cursor.execute('''
         INSERT INTO links
-        VALUES(?,?)''', bibliography.id, url)
+        VALUES(?,?)''', bibliography.id, uri)
 
 def update(bibliography):
     '''
