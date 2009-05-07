@@ -17,18 +17,37 @@
 # 02110-1301, USA.
 
 from __future__ import division, with_statement
-import md5
+import hashlib
 import pyPdf
+import os
 
-def md5sum(filename):
+def md5sum(filename, nbytes=None, include_size=None):
     '''
-    M = md5sum(filename)
+    M = md5sum(filename, nbytes=None, include_size=None)
 
     Similar to running md5sum filename on the commandline.
     '''
-    M = md5.md5()
-    M.update(file(filename).read())
+    if nbytes is not None and include_size is None:
+        include_size = True
+    M = hashlib.md5()
+    filesize = os.stat(filename).st_size
+    if include_size:
+        M.update(str(filesize))
+    if nbytes is not None:
+        filesize = min(filesize, nbytes)
+    input = file(filename)
+    while filesize > 0:
+        s = input.read(32*1024)
+        M.update(s)
+        filesize -= len(s)
     return M.hexdigest()
+
+def geturi(filename):
+    '''
+    uri = geturi(filename)
+    '''
+    md5 = md5sum(filename, 1024**2, include_size=True)
+    return 'bib+md5sum:%s?filesize=1MiB' % md5
 
 def gettitle(filename):
     '''
