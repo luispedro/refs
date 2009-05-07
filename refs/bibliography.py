@@ -25,10 +25,11 @@ class Bibliography(object):
     Represents a bibliography.
     '''
     def __init__(self, **kwargs):
+        self.id = kwargs.get('id',None)
         self.author = kwargs.get('author',None)
         self.title = kwargs.get('title',None)
         self.bibtype = kwargs.get('bibtype',None)
-        if self.bibtype is not None and self.bibtype not in _allowed_bibtypes):
+        if self.bibtype is not None and self.bibtype not in _allowed_bibtypes:
             raise Exception("Bibliography: unknown bibtype '%s'" % self.bibtype)
 
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:

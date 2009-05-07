@@ -16,7 +16,7 @@
 -- 02110-1301, USA.
 
 CREATE TABLE bibs (
-    bid INT PRIMARY KEY,
+    bid INTEGER PRIMARY KEY AUTOINCREMENT,
     title VARCHAR(255),
     author VARCHAR(255),
     date_published VARCHAR(255));
@@ -32,7 +32,7 @@ CREATE TABLE bib_extra (
 
 CREATE TABLE links (
     uri VARCHAR(255) PRIMARY KEY,
-    bid INT NOT NULL);
+    bid INTEGER NOT NULL);
 
 CREATE INDEX ids_uri_idx ON links(uri);
 

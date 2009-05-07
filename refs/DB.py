@@ -37,7 +37,7 @@ def lookup(uri):
         SELECT bid
         FROM links
         WHERE uri = ?''',
-        uri)
+        (uri,))
     res = res.fetchall()
     if not res:
         return None
@@ -52,15 +52,15 @@ def add(bibliography, uri=None):
     if bibliography.id is not None:
         cursor.execute('''
             INSERT INTO bibs(bid,author,title) VALUES(?,?,?)''',
-            bibliography.id, bibliography.author, bibliography.title)
+            (bibliography.id, bibliography.author, bibliography.title))
     else:
         cursor.execute('''
             INSERT INTO bibs(author,title) VALUES(?,?)''',
-            bibliography.author, bibliography.title)
-        cursor.execute('''
+            (bibliography.author, bibliography.title))
+        bibid = cursor.execute('''
             SELECT MAX(bibs.bid)
             FROM bibs''')
-        bibliography.id = cursor.fetchone()[0]
+        bibliography.id = bibid.fetchone()[0]
 
 
 def addlink(bibliography, uri):
@@ -73,8 +73,9 @@ def addlink(bibliography, uri):
         raise Exception('refs.DB.addlink: bid is None!')
     cursor = lazy_connect()
     cursor.execute('''
-        INSERT INTO links
-        VALUES(?,?)''', bibliography.id, uri)
+        INSERT INTO links(bid,uri)
+        VALUES(?,?)''',
+        (bibliography.id, uri))
 
 def update(bibliography):
     '''
